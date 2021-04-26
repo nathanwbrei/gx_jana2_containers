@@ -4,22 +4,32 @@ mount-cvmfs:
 	sudo mount -t cvmfs cvmfs-config.cern.ch /cvmfs/cvmfs-config.cern.ch
 	sudo mount -t cvmfs oasis.opensciencegrid.org /cvmfs/oasis.opensciencegrid.org
 
-docker-image:
+image:
 	-docker rm nbrei_gluex_image
 	docker build -t nbrei_gluex_image .
 
-docker-run:
+runssh:
 	-docker rm nbrei_gluex_container
-	docker run -v /Users/nbrei/projects/gluex/gluex_data:/data \
+	docker run \
+			   -v /Users/nbrei/projects/gluex/gluex_data:/data \
 	           -v /cvmfs/oasis.opensciencegrid.org/gluex:/cvmfs/oasis.opensciencegrid.org/gluex \
 	           -p 2222:22 \
 		       --name nbrei_gluex_container \
 		       nbrei_gluex_image
 
-docker-shell:
+runshell:
+	-docker rm nbrei_gluex_container
+	docker run -it \
+			   -v /Users/nbrei/projects/gluex/gluex_data:/data \
+	           -v /cvmfs/oasis.opensciencegrid.org/gluex:/cvmfs/oasis.opensciencegrid.org/gluex \
+	           -p 2222:22 \
+		       --name nbrei_gluex_container \
+		       nbrei_gluex_image /bin/bash
+
+shell:
 	docker exec -it nbrei_gluex_container /bin/bash
 
-docker-ssh:
+ssh:
 	ssh -p 2222 root@localhost
 
 
