@@ -22,6 +22,7 @@ RUN yum install -y epel-release && \
 		protobuf-c-devel \
 		scons \
 		sudo \
+		czmq \
 		tree \
 		wget \
 		which \
@@ -38,6 +39,9 @@ RUN yum install -y epel-release && \
 	&& rm -rf /var/cache/yum
 
 
+RUN yum install -y python-devel
+
+
 # Install ssh so that we can remote from CLion
 
 RUN yum install -y openssh-server gdb
@@ -45,14 +49,6 @@ RUN echo 'root:password' | chpasswd
 RUN sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
 RUN ssh-keygen -A -f /etc/ssh/ssh_host 
 EXPOSE 22
-
-# This came from StackOverflow. Consider deleting. 
-# SSH login fix. Otherwise user is kicked off after login
-# RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd
-# ENV NOTVISIBLE "in users profile"
-# RUN echo "export VISIBLE=now" >> /etc/profile
-
-
 
 
 # Set up /group, /u/group to point to CVMS, also as per CUE
@@ -69,15 +65,20 @@ RUN mkdir /app
 WORKDIR /app
 
 ENV JANA_HOME /app/jana2/install
+ENV GLUEX_TOP /group/halld/Software/builds/Linux_CentOS7-x86_64-gcc4.8.5-cntr
+
 ENV BUILD_THREADS 4
 RUN git clone https://github.com/JeffersonLab/JANA2 jana2
 RUN git clone -b nbrei_jana2 https://github.com/nathanwbrei/halld_recon
 
 # Install JANA2
 RUN cd jana2 \
-    && cmake -B build -D CMAKE_INSTALL_PREFIX=${JANA_HOME} \
+    && cmake -B build -DCMAKE_INSTALL_PREFIX=${JANA_HOME} \
     && cmake --build build -j ${BUILD_THREADS} \
     && cmake --install build
+
+# TODO: root-6.-08.06 CMake seems broken due to missing libmathtext.a
+# RUN cmake -B build -DCMAKE_INSTALL_PREFIX=${JANA_HOME} -DROOT_DIR=${GLUEX_TOP}/root/root-6.08.06/cmake/
 
 ENV PATH ${PATH}:${JANA_HOME}/bin
 ENV LD_LIBRARY_PATH ${LD_LIBRARY_PATH}:${JANA_HOME}/lib
