@@ -8,16 +8,11 @@ image:
 	-docker rm nbrei_gluex_image
 	docker build -t nbrei_gluex_image .
 
-runssh:
-	-docker rm nbrei_gluex_container
-	docker run \
-			   -v /Users/nbrei/projects/gluex/gluex_data:/data \
-	           -v /cvmfs/oasis.opensciencegrid.org/gluex:/cvmfs/oasis.opensciencegrid.org/gluex \
-	           -p 2222:22 \
-		       --name nbrei_gluex_container \
-		       nbrei_gluex_image
+image-nc:
+	-docker rm nbrei_gluex_image
+	docker build --no-cache -t nbrei_gluex_image .
 
-runshell:
+run:
 	-docker rm nbrei_gluex_container
 	docker run -it \
 			   -v /Users/nbrei/projects/gluex/gluex_data:/data \

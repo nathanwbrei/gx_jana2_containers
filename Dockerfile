@@ -86,7 +86,7 @@ ADD nbrei_gluex_version.xml /app/nbrei_gluex_version.xml
 # Install JANA2
 RUN cd jana2 \
     && cmake -B build -DCMAKE_INSTALL_PREFIX=${JANA_HOME} \
-    && cmake --build build -j ${BUILD_THREADS} \
+    && cmake --build build -j${BUILD_THREADS} \
     && cmake --install build
 
 # TODO: root-6.-08.06 CMake seems broken due to missing libmathtext.a
@@ -95,12 +95,16 @@ RUN cd jana2 \
 ENV PATH ${PATH}:${JANA_HOME}/bin
 ENV LD_LIBRARY_PATH ${LD_LIBRARY_PATH}:${JANA_HOME}/lib
 
-# Install halld_recon
 
+# Add newer versions of GDB so that CLion lets us remote debug
+RUN yum install -y centos-release-scl \
+ && yum-config-manager --enable rhel-server-rhscl-7-rpms \
+ && yum install -y devtoolset-8 
+# To use: `scl enable devtoolset-8 bash`
 
+ADD bash_profile /root/.bash_profile
+ADD bash_profile /root/.bashrc
 
-CMD echo "sshd is listening on port 22..." && /usr/sbin/sshd -D
-
-
+CMD /bin/bash
 
 
