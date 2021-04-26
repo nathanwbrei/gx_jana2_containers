@@ -39,12 +39,20 @@ RUN yum install -y epel-release && \
 	&& rm -rf /var/cache/yum
 
 
-RUN yum install -y python-devel
+# Install GlueX misc dependencies (take from install_gluex)
+
+RUN yum install -y imake openmotif-devel libXpm-devel bzip2-devel tcsh \
+    perl-XML-Simple perl-XML-Writer patch perl-File-Slurp \
+    mesa-libGLU-devel qt-devel boost-devel gsl-devel \
+    libtool bc nano cmake tbb-devel xrootd-client-libs xrootd-client \
+    libtirpc-devel vim python2-future gdb mariadb \
+    && cd /usr/include \
+    && ln -s freetype2/freetype freetype
 
 
 # Install ssh so that we can remote from CLion
 
-RUN yum install -y openssh-server gdb
+RUN yum install -y openssh-server
 RUN echo 'root:password' | chpasswd
 RUN sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
 RUN ssh-keygen -A -f /etc/ssh/ssh_host 
@@ -53,23 +61,27 @@ EXPOSE 22
 
 # Set up /group, /u/group to point to CVMS, also as per CUE
 
-RUN mkdir /cvmfs
-RUN ln -s cvmfs/oasis.opensciencegrid.org/gluex/group /group
-RUN mkdir /u
-RUN ln -s ../group /u/group
+RUN mkdir /cvmfs \
+ && ln -s cvmfs/oasis.opensciencegrid.org/gluex/group /group \
+ && mkdir /u \
+ && ln -s ../group /u/group
 
 VOLUME /cvmfs/oasis.opensciencegrid.org/gluex:/cvmfs/oasis.opensciencegrid.org/gluex
 
 
+# GlueX environment variables
+ENV JANA_HOME /app/jana2/install
+ENV GLUEX_TOP /group/halld/Software/builds/Linux_CentOS7-x86_64-gcc4.8.5-cntr
+ENV BUILD_SCRIPTS /group/halld/Software/build_scripts
+ENV BUILD_THREADS 4
+
 RUN mkdir /app
 WORKDIR /app
 
-ENV JANA_HOME /app/jana2/install
-ENV GLUEX_TOP /group/halld/Software/builds/Linux_CentOS7-x86_64-gcc4.8.5-cntr
-
-ENV BUILD_THREADS 4
-RUN git clone https://github.com/JeffersonLab/JANA2 jana2
+# Clone JANA2 and hd_recon
+RUN git clone -b nbrei_gluex_port https://github.com/JeffersonLab/JANA2 jana2
 RUN git clone -b nbrei_jana2 https://github.com/nathanwbrei/halld_recon
+ADD nbrei_gluex_version.xml /app/nbrei_gluex_version.xml
 
 # Install JANA2
 RUN cd jana2 \
@@ -85,5 +97,10 @@ ENV LD_LIBRARY_PATH ${LD_LIBRARY_PATH}:${JANA_HOME}/lib
 
 # Install halld_recon
 
+
+
 CMD echo "sshd is listening on port 22..." && /usr/sbin/sshd -D
+
+
+
 
