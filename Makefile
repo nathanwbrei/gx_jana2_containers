@@ -33,5 +33,14 @@ ssh:
 	ssh -p 2222 root@localhost
 
 
+image-standalone:
+	-docker rm nbrei_gluex_standalone_image
+	docker build -f Dockerfile_standalone -t nbrei_gluex_standalone_image .
 
-
+runshell-standalone:
+	-docker rm nbrei_gluex_standalone_container
+	docker run -it \
+			   -v /Users/nbrei/projects/gluex/gluex_data:/data \
+	           -p 2222:22 \
+		       --name nbrei_gluex_standalone_container \
+		       nbrei_gluex_standalone_image /bin/bash
