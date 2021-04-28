@@ -6,7 +6,7 @@ if [ -f /etc/bashrc ]; then
 fi
 
 
-echo "Running sshd on port 22..."
+echo "Running sshd. Login as root@localhost:2222:password"
 /sbin/sshd -D &
 
 source $BUILD_SCRIPTS/gluex_env_boot_jlab.sh
