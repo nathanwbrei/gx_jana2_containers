@@ -5,8 +5,8 @@ if [ -f /etc/bashrc ]; then
         . /etc/bashrc
 fi
 
-
-echo "Running sshd. Login as root@localhost:2222:password"
-/sbin/sshd -D &
+export BUILD_SCRIPTS=/group/halld/Software/build_scripts
+export JANA_HOME=/app/jana2/install
+export GLUEX_TOP=/group/halld/Software/builds/Linux_CentOS7-x86_64-gcc4.8.5-cntr
 
 source $BUILD_SCRIPTS/gluex_env_boot_jlab.sh
