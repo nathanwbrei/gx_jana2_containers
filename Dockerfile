@@ -105,6 +105,12 @@ RUN yum install -y centos-release-scl \
 ADD bash_profile /root/.bash_profile
 ADD bash_profile /root/.bashrc
 
+# Fix root's CMake
+RUN cp -r $ROOTSYS /app/root
+ADD ROOTConfig-targets.cmake /app/root/cmake/ROOTConfig-targets.cmake
+ADD ROOTConfig-targets-relwithdebinfo.cmake /app/root/cmake/ROOTConfig-targets-relwithdebinfo.cmake
+
 CMD /bin/bash
+
 
 
