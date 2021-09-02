@@ -106,10 +106,11 @@ ADD bash_profile /root/.bash_profile
 ADD bash_profile /root/.bashrc
 
 # Fix root's CMake
-RUN cp -r $ROOTSYS /app/root
+#RUN ls /group/halld && cp -r /group/halld/Software/builds/Linux_CentOS7-x86_64-gcc4.8.5-cntr/root/root-6.08.06/ /app/root
 ADD ROOTConfig-targets.cmake /app/root/cmake/ROOTConfig-targets.cmake
 ADD ROOTConfig-targets-relwithdebinfo.cmake /app/root/cmake/ROOTConfig-targets-relwithdebinfo.cmake
 
+ADD clion_env.sh /app/clion_env.sh
 CMD /bin/bash
 
 

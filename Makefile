@@ -14,12 +14,12 @@ image-nc:
 
 run:
 	-docker rm nbrei_gluex_container
-	ssh-keygen -f "$HOME/.ssh/known_hosts" -R "[localhost]:2222"
-	docker run -it \
+	ssh-keygen -f "${HOME}/.ssh/known_hosts" -R "[localhost]:2222"
+	docker run -d \
 			   -v /Users/nbrei/projects/gluex/gluex_data:/data \
 	           -v /cvmfs/oasis.opensciencegrid.org/gluex:/cvmfs/oasis.opensciencegrid.org/gluex \
 	           -p 2222:22 \
-			   --cap-add sys_ptrace
+			   --cap-add sys_ptrace \
 		       --name nbrei_gluex_container \
 		       nbrei_gluex_image /sbin/sshd -D
 
