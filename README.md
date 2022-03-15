@@ -1,5 +1,6 @@
 
-A Docker container for porting GlueX software to use JANA2. 
+
+Tools and environments for porting GlueX software to use JANA2. 
 
 Usage
 -----
